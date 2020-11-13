@@ -1,5 +1,5 @@
 # DC
-You dare challenge me mortal?
+You dare challenge me _mortal_?
 
 ![BATMAN](https://github.com/theerfan/DC/blob/master/images/BATMAN.png)
 
