@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Linq;
 using System.Text;
+using System.Collections.Generic;
+using Spire.Pdf;
 
 namespace DecryptMirKh
 {
@@ -47,12 +50,36 @@ namespace DecryptMirKh
     {
         static void Main(string[] args)
         {
-            byte[] IV = new byte[16];
-            AESEncryptionService ser = new AESEncryptionService();
             byte[] key = new SHA256CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes("37E1}*+?O%A6Ws6@"));
-            string s = "jSF3fJxh+n+7c+jZTN/DtO5oBIEdGaHLNFNWgoRzrxPp2658OdLsCwhlOCcosSgb";
-            string pass = Encoding.UTF8.GetString(ser.Decrypt(Convert.FromBase64String(s), key, IV));
-            Console.WriteLine(pass);
+            // IV?
+            byte[] XVI = new byte[16];
+            AESEncryptionService ser = new AESEncryptionService();
+
+            Console.WriteLine("Enter app name:");
+            string appName = Console.ReadLine();
+            string booksPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), appName, "Books");
+            string[] fileEntriesarr = Directory.GetFiles(booksPath);
+            var fileEntries = new List<string>(fileEntriesarr);
+            fileEntries.RemoveAll(x => x.Contains("__"));
+            foreach (string fileEntry in fileEntries)
+            {
+                string passwordFileName = Path.GetFileName(fileEntry);
+                if (passwordFileName.StartsWith("_"))
+                {
+                    string s = File.ReadAllText(fileEntry);
+                    string password = Encoding.UTF8.GetString(ser.Decrypt(Convert.FromBase64String(s), key, XVI));
+                    string fileName = passwordFileName.Replace("_", "");
+
+                    string pdfPath = Path.Join(Path.GetDirectoryName(fileEntry), fileName);
+                    PdfDocument pdf = new PdfDocument(pdfPath, password);
+                    // Deprecated with no available replacement. :))
+                    pdf.Security.UserPassword = string.Empty;
+
+                    //Saves the document, adds some watermark which is, eh, whatever.
+                    pdf.SaveToFile(fileName + "_NoPassword.pdf");
+                    Console.WriteLine(fileName + " 's Password removed!");
+                }
+            }
         }
     }
 }

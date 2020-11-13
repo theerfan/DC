@@ -5,4 +5,18 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <COMReference Include="{d37e2a3e-8545-3a39-9f4f-31827c9124ab}">
+      <Guid>d37e2a3e-8545-3a39-9f4f-31827c9124ab</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>4</VersionMinor>
+      <WrapperTool>tlbimp</WrapperTool>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Spire.PDF" Version="6.11.6" />
+    <PackageReference Include="Syncfusion.Pdf.WinForms" Version="18.3.0.48" />
+  </ItemGroup>
+
 </Project>
